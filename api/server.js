@@ -8,11 +8,15 @@ import messageRoute from './routes/messageRoute.js'
 import orderRoute from './routes/orderRoute.js'
 import reviewRoute from './routes/reviewRoute.js'
 import authRoute from './routes/authRoute.js'
+import cookieParser from 'cookie-parser'
 
 dotenv.config()
 const app = express()
 
+//..middleware
 app.use(express.json())
+app.use(cookieParser())
+
 
     //..Routes
     app.use("/api/auth", authRoute)
@@ -22,6 +26,14 @@ app.use(express.json())
     app.use("/api/message", messageRoute)
     app.use("/api/orders", orderRoute)
     app.use("/api/reviews", reviewRoute)
+
+    //..error middleware 
+    app.use((error, req, res, next)=>{
+      const errorStatus = error.status || 500
+      const errorMessage = error.message || "something went wrong..."
+
+      return res.status(errorStatus).send(errorMessage)
+    })
 
 
     try{
